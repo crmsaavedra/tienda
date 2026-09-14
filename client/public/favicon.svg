@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Fondo circular naranja -->
+  <circle cx="32" cy="32" r="32" fill="#ea580c"/>
+  <!-- Rueda de auto simplificada -->
+  <circle cx="32" cy="32" r="18" fill="white" opacity="0.15"/>
+  <circle cx="32" cy="32" r="14" fill="none" stroke="white" stroke-width="3"/>
+  <!-- Centro del aro -->
+  <circle cx="32" cy="32" r="5" fill="white"/>
+  <!-- Radios del aro -->
+  <line x1="32" y1="18" x2="32" y2="26" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="32" y1="38" x2="32" y2="46" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="18" y1="32" x2="26" y2="32" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="38" y1="32" x2="46" y2="32" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="21.8" y1="21.8" x2="27.5" y2="27.5" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="36.5" y1="36.5" x2="42.2" y2="42.2" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="42.2" y1="21.8" x2="36.5" y2="27.5" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="27.5" y1="36.5" x2="21.8" y2="42.2" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

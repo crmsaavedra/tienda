@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Finalizar Compra | Autopartes Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/checkout.css">
+</head>
+<body class="bg-ice">
+    <header>
+        <a class="logo" href="/"><span>AP</span> AUTOPARTES <b>PRO</b></a>
+        <nav>
+            <a href="/#catalogo">Seguir comprando</a>
+        </nav>
+    </header>
+
+    <main class="checkout-container">
+        <h1>Finaliza tu compra</h1>
+        
+        <div class="checkout-grid">
+            <div class="checkout-form-section">
+                <div class="card">
+                    <h2>Datos de contacto</h2>
+                    <p class="text-muted" style="margin-bottom:20px;">Ingresa tus datos para registrar tu pedido y procesar el pago.</p>
+                    
+                    <form id="checkout-form">
+                        <div class="form-group">
+                            <label>Nombre completo</label>
+                            <input type="text" name="name" id="name" required placeholder="Ej: Juan Pérez">
+                        </div>
+                        <div class="form-group">
+                            <label>RUT</label>
+                            <input type="text" name="rut" id="rut" required placeholder="Ej: 12.345.678-9">
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="tel" name="phone" id="phone" required placeholder="Ej: +56 9 1234 5678">
+                        </div>
+                        <div class="form-group">
+                            <label>Dirección de envío</label>
+                            <input type="text" name="address" id="address" required placeholder="Ej: Av. Principal 123, Depto 4, Santiago">
+                        </div>
+                        <div class="form-group">
+                            <label>Correo electrónico</label>
+                            <input type="email" name="email" id="email" required placeholder="ejemplo@correo.com">
+                        </div>
+                        <div class="form-group" id="password-group">
+                            <label>Contraseña <small>(para crear o ingresar a tu cuenta)</small></label>
+                            <input type="password" name="password" id="password" required minlength="8" placeholder="Mínimo 8 caracteres">
+                        </div>
+                        
+                        <div class="form-notice" style="font-size:0.85em; color:var(--muted); margin-bottom:20px; background:#f4f7fa; padding:10px; border-radius:4px;">
+                            Si ya tienes cuenta con este email, iniciaremos sesión automáticamente. Si no, crearemos una cuenta para que puedas hacer seguimiento a tu pedido.
+                        </div>
+
+                        <button type="submit" class="primary full" id="submit-btn" style="padding:16px; font-size:18px;">Pagar con Mercado Pago</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="checkout-summary-section">
+                <div class="card summary-card">
+                    <h2>Resumen de tu pedido</h2>
+                    <div id="checkout-items" class="checkout-items" style="margin-top:20px; margin-bottom:20px;">
+                        <p class="text-muted">Cargando carrito...</p>
+                    </div>
+                    
+                    <div class="checkout-totals">
+                        <div class="total-row" style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                            <span>Subtotal</span>
+                            <strong id="subtotal">$0</strong>
+                        </div>
+                        <div class="total-row discount-row" id="discount-row" style="display:none; justify-content:space-between; color:var(--orange); margin-bottom:10px;">
+                            <span>Descuento <small id="discount-code" style="background:rgba(244,123,32,0.1); padding:2px 6px; border-radius:4px;"></small></span>
+                            <strong id="discount">-$0</strong>
+                        </div>
+                        <div class="total-row grand-total" style="display:flex; justify-content:space-between; border-top:2px solid var(--line); margin-top:15px; padding-top:15px; font-size:24px; font-weight:700;">
+                            <span>Total a pagar</span>
+                            <span id="total">$0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="global-loader" class="global-loader">
+        <div class="spinner"></div>
+        <p id="loader-text">Procesando pago...</p>
+    </div>
+
+    <script src="/checkout.js"></script>
+</body>
+</html>
