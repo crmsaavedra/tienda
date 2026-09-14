@@ -120,11 +120,31 @@ mongoose.connection.on('disconnected', () => {
 
 const { pruneAuditLogs, releaseExpiredReservations } = require('./services');
 
+async function ensurePlaceholders() {
+  try {
+    const { imageUrlFor, bannerUrlFor } = require('./part-image');
+    // Generar banners principales
+    bannerUrlFor('MUERTE A LOS PREJUICIOS', 'MUERTE A LOS PREJUICIOS');
+    bannerUrlFor('AUTO#PRO', 'AUTO#PRO');
+    // Generar SVG para todos los repuestos activos si no existen
+    const parts = await Part.find({ active: true }).select('sku name category price brand');
+    for (const p of parts) {
+      imageUrlFor(p);
+    }
+  } catch (err) {
+    logger.error('Error generando imágenes placeholder:', err.message);
+  }
+}
+
 const start = () => {
   if (!process.env.MONGODB_URI && process.env.NODE_ENV === 'test') {
     logger.warn('Tests que no requieren Mongo deberían importar la app directamente');
   }
-  return mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/autopartes_pro').then(() => {
+  return mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/autopartes_pro').then(async () => {
+    
+    // Garantizar que las imágenes SVG existan en el disco
+    await ensurePlaceholders();
+
     const server = app.listen(PORT, () => logger.info(`Autopartes Pro en http://localhost:${PORT}`));
     
     // Tareas en segundo plano (cron)
