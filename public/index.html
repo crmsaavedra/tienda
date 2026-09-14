@@ -1,0 +1,264 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Autopartes Pro | Repuestos confiables</title>
+  <meta name="description" content="Encuentra repuestos de marcas líderes con compatibilidad técnica verificada y despacho seguro en todo Chile.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header>
+  <a class="logo" href="/">
+    <span>AP</span> AUTOPARTES <b>PRO</b>
+  </a>
+  <nav>
+    <a href="#catalogo">Repuestos</a>
+    <a href="#confianza">Garantías</a>
+    <a href="#marcas">Marcas</a>
+    <a href="/admin">Administración</a>
+  </nav>
+  <button class="cart-button" id="open-cart">
+    🛒 Carrito <strong id="cart-count">0</strong>
+  </button>
+</header>
+
+<!-- ============================================================
+     MAIN
+     ============================================================ -->
+<main id="inicio">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <p class="eyebrow">Repuestos con respaldo profesional</p>
+      <h1>Tu vehículo merece <em>piezas que responden.</em></h1>
+      <p class="intro">
+        Encuentra repuestos de marcas líderes, con compatibilidad técnica verificada y despacho seguro en todo Chile.
+      </p>
+      <div class="hero-actions">
+        <a class="primary" href="#catalogo">Buscar repuestos</a>
+        <a class="hero-link" href="#confianza">Conoce nuestras garantías →</a>
+      </div>
+
+      <!-- Mini stats -->
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <strong>+5.000</strong>
+          <span>Repuestos disponibles</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <strong>24 hs</strong>
+          <span>Despacho express</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <strong>100%</strong>
+          <span>Compra protegida</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-panel">
+      <small>🔍 COMPATIBILIDAD VERIFICADA</small>
+      <h2>Encuentra la pieza correcta</h2>
+      <p class="hero-panel-desc">Selecciona tu vehículo y te mostramos los repuestos compatibles.</p>
+      <form id="vehicle-form">
+        <select id="make">
+          <option value="">Marca del vehículo</option>
+          <option>Toyota</option>
+          <option>Hyundai</option>
+          <option>Chevrolet</option>
+          <option>Kia</option>
+          <option>Nissan</option>
+          <option>Ford</option>
+          <option>Volkswagen</option>
+          <option>Mazda</option>
+        </select>
+        <input id="model" placeholder="Modelo (ej. Corolla, Accent)">
+        <button class="primary" type="submit">Ver compatibilidad</button>
+      </form>
+      <p class="hero-panel-note">¿No encuentras tu vehículo? <a href="mailto:ventas@autopartespro.cl">Escríbenos</a></p>
+    </div>
+  </section>
+
+  <!-- TRUST BADGES -->
+  <section class="trust" id="confianza">
+    <div>
+      <b>🛡️</b>
+      <span>
+        <strong>Compra protegida</strong>
+        Pago 100% seguro con Transbank Webpay Plus
+      </span>
+    </div>
+    <div>
+      <b>⭐</b>
+      <span>
+        <strong>Calidad garantizada</strong>
+        Solo marcas premium seleccionadas
+      </span>
+    </div>
+    <div>
+      <b>🔧</b>
+      <span>
+        <strong>Soporte experto</strong>
+        Te ayudamos a encontrar la pieza
+      </span>
+    </div>
+  </section>
+
+  <!-- BRANDS STRIP -->
+  <section class="brands" id="marcas">
+    <p class="brands-label">MARCAS QUE TRABAJAMOS</p>
+    <div class="brands-strip">
+      <span>BOSCH</span>
+      <span>MOBIL</span>
+      <span>PHILIPS</span>
+      <span>VALEO</span>
+      <span>GATES</span>
+      <span>MICHELIN</span>
+      <span>NGK</span>
+      <span>MONROE</span>
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="featured">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">SELECCIÓN DEL TALLER</p>
+        <h2>Productos destacados</h2>
+      </div>
+      <a class="detail" href="#catalogo">Ver todo el catálogo →</a>
+    </div>
+    <p class="featured-copy">Los repuestos más buscados, seleccionados por calidad, disponibilidad y desempeño.</p>
+    <div class="featured-grid" id="featured-products"></div>
+  </section>
+
+  <!-- CATALOG -->
+  <section class="catalog" id="catalogo">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">INVENTARIO DISPONIBLE</p>
+        <h2>Repuestos para avanzar seguro</h2>
+      </div>
+      <label class="search">
+        ⌕ <input id="search" placeholder="Busca por nombre, marca o código">
+      </label>
+    </div>
+
+    <div class="filters" id="filters">
+      <button data-category="" class="selected">Todos</button>
+      <button data-category="Frenos">Frenos</button>
+      <button data-category="Filtros">Filtros</button>
+      <button data-category="Suspensión">Suspensión</button>
+      <button data-category="Motor">Motor</button>
+      <button data-category="Eléctrico">Eléctrico</button>
+    </div>
+
+    <p id="feedback" class="feedback" aria-live="polite"></p>
+    <div class="product-grid" id="products"></div>
+    <nav class="pagination" id="pagination" aria-label="Páginas de catálogo"></nav>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="cta-banner">
+    <div class="cta-content">
+      <p class="eyebrow">¿TIENES DUDAS?</p>
+      <h2>Nuestros expertos te ayudan a elegir</h2>
+      <p>Contáctanos por email o teléfono y te asesoramos sin costo.</p>
+      <div class="cta-actions">
+        <a class="primary" href="mailto:ventas@autopartespro.cl">📧 Enviar email</a>
+        <a class="cta-phone" href="tel:+56220000000">📞 +56 2 2000 0000</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer>
+  <div>
+    <div class="footer-brand">
+      <a class="logo" href="#inicio"><span>AP</span> AUTOPARTES <b>PRO</b></a>
+      <p>Repuestos confiables para que sigas avanzando seguro en todo Chile.</p>
+    </div>
+    <div>
+      <h3>Compra segura</h3>
+      <a href="#confianza">Pago protegido</a>
+      <a href="#confianza">Garantía de calidad</a>
+      <a href="#catalogo">Compatibilidad</a>
+      <a href="/login">Mi cuenta</a>
+    </div>
+    <div>
+      <h3>Atención</h3>
+      <a href="mailto:ventas@autopartespro.cl">ventas@autopartespro.cl</a>
+      <a href="tel:+56220000000">+56 2 2000 0000</a>
+      <span>Lun–Vie · 09:00 a 18:00</span>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2026 Autopartes Pro · Todos los derechos reservados · Pago seguro con Transbank Webpay Plus
+  </div>
+</footer>
+
+<!-- ============================================================
+     CART DRAWER
+     ============================================================ -->
+<aside class="cart" id="cart" aria-hidden="true">
+  <div class="cart-head">
+    <h2>Tu carrito</h2>
+    <button class="close" id="close-cart" aria-label="Cerrar carrito">×</button>
+  </div>
+  <div id="cart-items"></div>
+  <div class="coupon">
+    <input id="coupon" placeholder="Código de descuento">
+    <button id="apply-coupon">Aplicar</button>
+  </div>
+  <div class="totals">
+    <span>Subtotal <b id="subtotal">$0</b></span>
+    <span class="discount-line">Descuento <b id="discount">-$0</b></span>
+    <strong>Total <b id="total">$0</b></strong>
+  </div>
+  <button class="primary full" id="checkout">Continuar al pago →</button>
+  <p class="secure">🔒 Pago procesado de forma segura por Transbank Webpay Plus.</p>
+</aside>
+<div class="overlay" id="overlay"></div>
+
+<!-- ============================================================
+     MODALS
+     ============================================================ -->
+<dialog id="auth-modal">
+  <button class="close modal-close">×</button>
+  <h2>Finaliza tu compra</h2>
+  <p>Ingresa para guardar tu pedido y continuar al pago.</p>
+  <form id="auth-form">
+    <input name="name" placeholder="Nombre completo (solo registro)">
+    <input name="email" type="email" placeholder="Email" required>
+    <input name="password" type="password" placeholder="Contraseña (mín. 8 caracteres)" required>
+    <button class="primary full">Ingresar / registrarme</button>
+  </form>
+  <small>Si el email no existe, crearemos tu cuenta automáticamente.</small>
+</dialog>
+
+<dialog id="product-modal" class="modal product-modal">
+  <button class="close product-close">×</button>
+  <div id="product-detail"></div>
+</dialog>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
+

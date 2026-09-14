@@ -1,0 +1,14 @@
+node_modules/
+dist/
+uploads/
+.env
+.env.local
+*.log
+npm-debug.log*
+server-test.pid
+server-test.log
+server-test-err.log
+smoke.log
+smoke-err.log
+backups/
+.otplib-cache/
