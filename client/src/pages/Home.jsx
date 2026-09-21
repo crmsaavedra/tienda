@@ -132,79 +132,94 @@ export default function Home() {
         </section>
       )}
 
-      {/* Trust Badges */}
-      <section className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <motion.div whileHover={{ y: -5 }} className="flex flex-col items-center text-center p-6 bg-slate-50 rounded-xl border border-slate-100">
-              <Shield className="w-12 h-12 text-primary mb-4" />
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Compra protegida</h3>
-              <p className="text-slate-500">Pago seguro con Webpay Plus de Transbank</p>
-            </motion.div>
-            <motion.div whileHover={{ y: -5 }} className="flex flex-col items-center text-center p-6 bg-slate-50 rounded-xl border border-slate-100">
-              <CheckCircle className="w-12 h-12 text-primary mb-4" />
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Calidad garantizada</h3>
-              <p className="text-slate-500">Marcas seleccionadas y verificadas</p>
-            </motion.div>
-            <motion.div whileHover={{ y: -5 }} className="flex flex-col items-center text-center p-6 bg-slate-50 rounded-xl border border-slate-100">
-              <Wrench className="w-12 h-12 text-primary mb-4" />
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Soporte experto</h3>
-              <p className="text-slate-500">Te ayudamos a elegir la pieza correcta</p>
-            </motion.div>
+      {/* Categorías Rápidas / Quick Access */}
+      <section className="bg-slate-50 border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex overflow-x-auto pb-4 hide-scrollbar gap-4 sm:gap-6 justify-start md:justify-center">
+            {[
+              { name: 'Neumáticos', icon: '🛞' },
+              { name: 'Baterías', icon: '🔋' },
+              { name: 'Lubricantes', icon: '🛢️' },
+              { name: 'Frenos', icon: '🛑' },
+              { name: 'Iluminación', icon: '💡' },
+              { name: 'Accesorios', icon: '✨' },
+            ].map(cat => (
+              <Link key={cat.name} to={`/catalogo?category=${cat.name}`} className="flex flex-col items-center flex-shrink-0 group">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-full shadow-sm flex items-center justify-center text-2xl sm:text-3xl border border-slate-100 group-hover:border-primary group-hover:shadow-md transition-all">
+                  {cat.icon}
+                </div>
+                <span className="mt-2 text-xs sm:text-sm font-medium text-slate-700 group-hover:text-primary text-center">
+                  {cat.name}
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Featured Products */}
-      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <p className="text-sm font-bold text-primary tracking-widest uppercase mb-2">
-            {config?.featuredEyebrow || 'SELECCIÓN DEL TALLER'}
-          </p>
-          <h2 className="text-3xl font-extrabold text-slate-900 mb-4">
-            {config?.featuredTitle || 'Productos destacados'}
-          </h2>
-          <p className="text-lg text-slate-500 max-w-2xl mx-auto">
-            {config?.featuredIntro || 'Los repuestos más buscados, seleccionados por calidad, disponibilidad y desempeño.'}
-          </p>
+      <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-end mb-8">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">
+              Productos Destacados
+            </h2>
+            <p className="text-sm md:text-base text-slate-500">
+              Seleccionados por nuestros expertos
+            </p>
+          </div>
+          <Link to="/catalogo" className="hidden sm:inline-flex items-center text-primary font-bold hover:underline">
+            Ver todo <ArrowRight className="ml-1 w-4 h-4" />
+          </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {featuredParts.map((part) => (
             <motion.div 
               key={part._id} 
-              whileHover={{ y: -10 }}
-              className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden group flex flex-col"
+              whileHover={{ y: -5 }}
+              className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden group flex flex-col hover:shadow-md transition-all"
             >
-              <Link to={`/producto/${part._id}`} className="block relative aspect-square overflow-hidden bg-slate-100">
+              <Link to={`/producto/${part._id}`} className="block relative aspect-square overflow-hidden bg-white p-4">
                 <img 
                   src={part.image || 'https://images.unsplash.com/photo-1555617781-db47da4fef27?w=500&q=80'} 
                   alt={part.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                 />
                 {part.discountPercent > 0 && (
-                  <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                  <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] sm:text-xs font-bold px-2 py-1 uppercase rounded-sm">
                     -{part.discountPercent}%
                   </div>
                 )}
               </Link>
-              <div className="p-5 flex flex-col flex-grow">
-                <div className="text-xs text-slate-500 mb-1">{part.brand}</div>
-                <Link to={`/producto/${part._id}`} className="block">
-                  <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-2 hover:text-primary transition-colors">
+              <div className="p-4 flex flex-col flex-grow border-t border-slate-50">
+                <div className="text-[10px] sm:text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">{part.brand}</div>
+                <Link to={`/producto/${part._id}`} className="block mb-2">
+                  <h3 className="text-sm sm:text-base font-bold text-slate-800 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
                     {part.name}
                   </h3>
                 </Link>
+                
+                {/* Estrellas simuladas */}
+                <div className="flex items-center gap-1 mb-3">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className={`w-3 h-3 sm:w-4 sm:h-4 ${i < 4 ? 'text-yellow-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                  <span className="text-[10px] text-slate-400 ml-1">(24)</span>
+                </div>
+
                 <div className="mt-auto">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xl font-black text-slate-900">
-                      ${(part.price * (1 - (part.discountPercent || 0) / 100)).toLocaleString('es-CL')}
-                    </span>
+                  <div className="mb-4">
                     {part.discountPercent > 0 && (
-                      <span className="text-sm text-slate-400 line-through">
-                        ${part.price.toLocaleString('es-CL')}
-                      </span>
+                      <div className="text-[10px] sm:text-xs text-slate-400 line-through">
+                        Normal: ${part.price.toLocaleString('es-CL')}
+                      </div>
                     )}
+                    <div className="text-lg sm:text-xl font-black text-slate-900">
+                      ${(part.price * (1 - (part.discountPercent || 0) / 100)).toLocaleString('es-CL')}
+                    </div>
                   </div>
                   <button 
                     onClick={() => {
@@ -212,52 +227,92 @@ export default function Home() {
                       toast.success(`${part.name} agregado al carrito.`);
                     }}
                     disabled={part.stock < 1}
-                    className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-2 sm:py-2.5 px-4 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm uppercase tracking-wide"
                   >
-                    {part.stock > 0 ? 'Agregar al carrito' : 'Sin stock'}
+                    {part.stock > 0 ? 'Comprar ahora' : 'Sin stock'}
                   </button>
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
+        <div className="mt-6 text-center sm:hidden">
+          <Link to="/catalogo" className="inline-block border border-slate-300 text-slate-700 font-bold py-2 px-6 rounded hover:bg-slate-50 transition-colors">
+            Ver todo el catálogo
+          </Link>
+        </div>
+      </section>
+
+      {/* Trust Badges - Estilo Autoplanet */}
+      <section className="bg-white border-t border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-primary mb-3">
+                <Shield className="w-6 h-6" />
+              </div>
+              <h3 className="text-sm font-bold text-slate-900">Garantía Total</h3>
+              <p className="text-xs text-slate-500 mt-1">Cambios y devoluciones</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-primary mb-3">
+                <CheckCircle className="w-6 h-6" />
+              </div>
+              <h3 className="text-sm font-bold text-slate-900">Compra Segura</h3>
+              <p className="text-xs text-slate-500 mt-1">Pagos 100% protegidos</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-primary mb-3">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+              </div>
+              <h3 className="text-sm font-bold text-slate-900">Despacho Rápido</h3>
+              <p className="text-xs text-slate-500 mt-1">A todo Chile</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-primary mb-3">
+                <Wrench className="w-6 h-6" />
+              </div>
+              <h3 className="text-sm font-bold text-slate-900">Soporte Técnico</h3>
+              <p className="text-xs text-slate-500 mt-1">Asesoría especializada</p>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Vistos recientemente */}
       {recentParts.length > 0 && (
-        <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-200">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-extrabold text-slate-900 flex items-center gap-2">
-              <Eye className="w-6 h-6 text-primary" /> Vistos recientemente
+        <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-end mb-6">
+            <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+              <Eye className="w-5 h-5 text-primary" /> Vistos recientemente
             </h2>
-            <Link to="/favoritos" className="text-sm text-primary font-medium hover:underline">Ver favoritos</Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             {recentParts.map((part) => (
               <motion.div
                 key={part._id}
-                whileHover={{ y: -10 }}
-                className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden group flex flex-col"
+                whileHover={{ y: -5 }}
+                className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden group flex flex-col hover:shadow-md transition-all"
               >
-                <Link to={`/producto/${part._id}`} className="block relative aspect-square overflow-hidden bg-slate-100">
+                <Link to={`/producto/${part._id}`} className="block relative aspect-square overflow-hidden bg-white p-4">
                   <img
                     src={part.image || 'https://images.unsplash.com/photo-1555617781-db47da4fef27?w=500&q=80'}
                     alt={part.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                   />
                 </Link>
-                <div className="p-5 flex flex-col flex-grow">
-                  <div className="text-xs text-slate-500 mb-1">{part.brand}</div>
-                  <Link to={`/producto/${part._id}`} className="block">
-                    <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-2 hover:text-primary transition-colors">
+                <div className="p-4 flex flex-col flex-grow border-t border-slate-50">
+                  <div className="text-[10px] sm:text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">{part.brand}</div>
+                  <Link to={`/producto/${part._id}`} className="block mb-2">
+                    <h3 className="text-sm sm:text-base font-bold text-slate-800 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
                       {part.name}
                     </h3>
                   </Link>
                   <div className="mt-auto">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-xl font-black text-slate-900">
+                    <div className="mb-4">
+                      <div className="text-lg sm:text-xl font-black text-slate-900">
                         ${(part.price * (1 - (part.discountPercent || 0) / 100)).toLocaleString('es-CL')}
-                      </span>
+                      </div>
                     </div>
                     <button
                       onClick={() => {
@@ -265,9 +320,9 @@ export default function Home() {
                         toast.success(`${part.name} agregado al carrito.`);
                       }}
                       disabled={part.stock < 1}
-                      className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                      className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-2 px-4 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm uppercase tracking-wide"
                     >
-                      {part.stock > 0 ? 'Agregar al carrito' : 'Sin stock'}
+                      {part.stock > 0 ? 'Comprar ahora' : 'Sin stock'}
                     </button>
                   </div>
                 </div>
