@@ -108,3 +108,29 @@ export const useRecentStore = create(
     }
   )
 );
+
+export const useVehicleStore = create(
+  persist(
+    (set) => ({
+      vehicle: null,
+      setVehicle: (vehicle) => set({ vehicle }),
+      clearVehicle: () => set({ vehicle: null }),
+    }),
+    {
+      name: 'vehicle-storage',
+    }
+  )
+);
+
+export const useLocationStore = create(
+  persist(
+    (set) => ({
+      location: null,
+      setLocation: (location) => set({ location }),
+      clearLocation: () => set({ location: null }),
+    }),
+    {
+      name: 'location-storage',
+    }
+  )
+);

@@ -7,7 +7,9 @@ const router = express.Router();
 
 router.get('/api/parts', async (req, res) => {
   const { q, category, make, model, sort, stock } = req.query; const filter = { active: true };
-  const order = sort === 'price_asc' ? { price: 1 } : sort === 'price_desc' ? { price: -1 } : sort === 'name' ? { name: 1 } : { createdAt: -1 };
+  // _id is a deterministic tie-breaker. Without it, records sharing a
+  // createdAt timestamp can move between pages and appear duplicated.
+  const order = sort === 'price_asc' ? { price: 1, _id: 1 } : sort === 'price_desc' ? { price: -1, _id: -1 } : sort === 'name' ? { name: 1, _id: 1 } : { createdAt: -1, _id: -1 };
   if (q) filter.$text = { $search: q }; if (category) filter.category = category;
   if (req.query.ids) filter._id = { $in: String(req.query.ids).split(',').filter(Boolean) };
   if (make || model) filter.compatibility = { $elemMatch: { ...(make && { make: new RegExp(`^${make}$`, 'i') }), ...(model && { model: new RegExp(`^${model}$`, 'i') }) } };
@@ -81,6 +83,25 @@ router.delete('/api/reviews/:id', auth, async (req, res) => {
   const review = await Review.findOneAndDelete({ _id: req.params.id, user: req.user.id });
   if (!review) return res.status(404).json({ error: 'Reseña no encontrada' });
   res.json({ ok: true });
+});
+
+const { B2BRequest, Store, Workshop } = require('../models');
+
+router.get('/api/stores', async (req, res) => {
+  res.json(await Store.find({ active: true }).sort({ nombre: 1 }));
+});
+
+router.get('/api/workshops', async (req, res) => {
+  res.json(await Workshop.find({ active: true }).sort({ rating: -1 }));
+});
+
+router.post('/api/b2b-requests', async (req, res) => {
+  try {
+    const request = await B2BRequest.create(req.body);
+    res.status(201).json(request);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
 module.exports = router;

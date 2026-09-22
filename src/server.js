@@ -57,6 +57,16 @@ app.use(mongoSanitize());
 app.use('/api/', globalLimiter);
 app.use('/api/auth', authLimiter);
 
+// Do not let Mongoose buffer requests forever after a database disconnect.
+// Returning a clear 503 lets the frontend recover instead of keeping its
+// loading state indefinitely while MongoDB reconnects.
+app.use('/api', (req, res, next) => {
+  if (req.path === '/health' || mongoose.connection.readyState === 1) return next();
+  return res.status(503).json({
+    error: 'El servicio de datos no está disponible temporalmente. Intenta nuevamente en unos minutos.'
+  });
+});
+
 if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
   logger.error('Falta JWT_SECRET en el entorno. Configúralo en .env para producción.');
   process.exit(1);
@@ -80,6 +90,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 app.get('/sitemap.xml', async (req, res) => {
+  if (mongoose.connection.readyState !== 1) return res.status(503).type('text/plain').send('Servicio de datos no disponible temporalmente.');
   const base = process.env.BASE_URL || `http://localhost:${PORT}`;
   const parts = await Part.find({ active: true }).select('name updatedAt').limit(2000);
   const urls = [
@@ -140,23 +151,18 @@ const start = () => {
   if (!process.env.MONGODB_URI && process.env.NODE_ENV === 'test') {
     logger.warn('Tests que no requieren Mongo deberían importar la app directamente');
   }
-  return mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/autopartes_pro').then(async () => {
-    
-    // Garantizar que las imágenes SVG existan en el disco
-    await ensurePlaceholders();
+  const server = app.listen(PORT, () => logger.info(`Autopartes Pro en http://localhost:${PORT}`));
+  mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/autopartes_pro')
+    .then(() => ensurePlaceholders())
+    .catch(err => logger.error({ err: err.message }, 'MongoDB initial connection error'));
 
-    const server = app.listen(PORT, () => logger.info(`Autopartes Pro en http://localhost:${PORT}`));
-    
-    // Tareas en segundo plano (cron)
-    if (process.env.NODE_ENV !== 'test') {
-      setInterval(() => pruneAuditLogs().catch(e => logger.error({ err: e.message }, 'prune cron error')), 24 * 60 * 60 * 1000); // Diario
-      setInterval(() => releaseExpiredReservations().catch(e => logger.error({ err: e.message }, 'release cron error')), 5 * 60 * 1000); // 5 min
-    }
-    
-    return server;
-  }).catch(err => {
-    logger.error({ err: err.message }, 'MongoDB initial connection error');
-  });
+  // Tareas en segundo plano (cron)
+  if (process.env.NODE_ENV !== 'test') {
+    setInterval(() => pruneAuditLogs().catch(e => logger.error({ err: e.message }, 'prune cron error')), 24 * 60 * 60 * 1000); // Diario
+    setInterval(() => releaseExpiredReservations().catch(e => logger.error({ err: e.message }, 'release cron error')), 5 * 60 * 1000); // 5 min
+  }
+
+  return server;
 };
 
 if (require.main === module) start();

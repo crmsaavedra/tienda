@@ -107,4 +107,19 @@ router.get('/api/orders/:id/invoice', auth, async (req, res) => {
   require('../invoice').buildInvoicePDF(res, order, siteConfig);
 });
 
+router.get('/api/orders/track/:orderNumber', async (req, res) => {
+  const order = await Order.findOne({ orderNumber: req.params.orderNumber });
+  if (!order) return res.status(404).json({ message: 'No se encontró ninguna orden con ese número.' });
+  // Solo devolvemos datos seguros, no exponer datos del cliente completos
+  res.json({
+    _id: order._id,
+    orderNumber: order.orderNumber,
+    createdAt: order.createdAt,
+    total: order.total,
+    status: order.status,
+    trackingNumber: order.trackingNumber,
+    items: order.items.map(item => ({ name: item.name, qty: item.qty, unitPrice: item.unitPrice }))
+  });
+});
+
 module.exports = router;

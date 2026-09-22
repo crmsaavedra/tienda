@@ -1,7 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const { Part, User, Discount, Order, SiteConfig, Review } = require('./models');
+const { Part, User, Discount, Order, SiteConfig, Review, Store, Workshop } = require('./models');
 const { imageUrlFor, bannerUrlFor } = require('./part-image');
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/autopartes_pro';
@@ -67,7 +67,7 @@ async function seedDemo() {
   const email = process.env.ADMIN_EMAIL || 'admin@autopartespro.cl';
   await User.findOneAndUpdate(
     { email },
-    { name: 'Administrador', email, password: await bcrypt.hash(process.env.ADMIN_PASSWORD || 'CambiaEstaClave123!', 12), role: 'admin' },
+    { name: 'Administrador', email, password: await bcrypt.hash(process.env.ADMIN_PASSWORD || 'define_una_clave_segura_para_el_admin', 12), role: 'admin' },
     { upsert: true }
   );
 
@@ -98,6 +98,16 @@ async function seedDemo() {
     { updateOne: { filter: { code: 'CAMIONETA5' }, update: { $set: { code: 'CAMIONETA5', type: 'percent', value: 5, minimumAmount: 30000, startsAt: new Date('2020-01-01'), endAt: new Date('2027-12-31'), active: true } }, upsert: true } }
   ]);
   console.log('Descuentos: BIENVENIDA10, CAMIONETA5.');
+
+  await Store.bulkWrite([
+    { updateOne: { filter: { nombre: 'AutoPro Providencia' }, update: { $set: { nombre: 'AutoPro Providencia', direccion: 'Av. Providencia 1234, Santiago', horario: 'Lun–Vie 09:00–19:00 · Sáb 10:00–15:00', telefono: '+56 9 1234 5678', lat: -33.4253, lng: -70.6157, active: true } }, upsert: true } },
+    { updateOne: { filter: { nombre: 'AutoPro Maipú' }, update: { $set: { nombre: 'AutoPro Maipú', direccion: 'Av. Pajaritos 3210, Maipú', horario: 'Lun–Vie 09:00–18:30 · Sáb 10:00–14:00', telefono: '+56 9 8765 4321', lat: -33.5106, lng: -70.7565, active: true } }, upsert: true } }
+  ]);
+  await Workshop.bulkWrite([
+    { updateOne: { filter: { nombre: 'Taller MotorLab' }, update: { $set: { nombre: 'Taller MotorLab', direccion: 'Av. Italia 1560, Ñuñoa', telefono: '+56 9 4141 8080', rating: 4.9, especialidades: ['Frenos', 'Suspensión', 'Diagnóstico'], active: true } }, upsert: true } },
+    { updateOne: { filter: { nombre: 'Garage Norte' }, update: { $set: { nombre: 'Garage Norte', direccion: 'Independencia 2345, Conchalí', telefono: '+56 9 5656 9090', rating: 4.7, especialidades: ['Motor', 'Transmisión', 'Electricidad'], active: true } }, upsert: true } }
+  ]);
+  console.log('Sucursales y talleres demo verificados.');
 
   let config = await SiteConfig.findOne();
   if (!config) config = await SiteConfig.create({});

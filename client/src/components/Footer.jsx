@@ -25,6 +25,11 @@ const TwitterIcon = ({ className }) => (
 
 export default function Footer() {
   const { config } = useConfigStore();
+  const socialLinks = [
+    { label: 'Facebook', href: config?.socialFacebook, Icon: FacebookIcon },
+    { label: 'Instagram', href: config?.socialInstagram, Icon: InstagramIcon },
+    { label: 'X', href: config?.socialTwitter, Icon: TwitterIcon }
+  ].filter(({ href }) => /^https?:\/\//i.test(href || ''));
   
   return (
     <footer className="bg-slate-900 text-slate-300 py-12 border-t border-slate-800 mt-auto">
@@ -57,15 +62,9 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-bold text-white mb-4">Síguenos</h3>
             <div className="flex space-x-4">
-              {config?.socialFacebook && (
-                <a href={config.socialFacebook} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors"><FacebookIcon className="w-5 h-5" /></a>
-              )}
-              {config?.socialInstagram && (
-                <a href={config.socialInstagram} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors"><InstagramIcon className="w-5 h-5" /></a>
-              )}
-              {config?.socialTwitter && (
-                <a href={config.socialTwitter} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition-colors"><TwitterIcon className="w-5 h-5" /></a>
-              )}
+              {socialLinks.length ? socialLinks.map(({ label, href, Icon }) => (
+                <a key={label} href={href} target="_blank" rel="noreferrer" aria-label={label} className="text-slate-400 hover:text-white transition-colors"><Icon className="w-5 h-5" /></a>
+              )) : <span className="text-sm text-slate-500">Redes sociales próximamente.</span>}
             </div>
           </div>
         </div>

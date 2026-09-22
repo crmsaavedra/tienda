@@ -9,6 +9,9 @@ import toast from 'react-hot-toast';
 export default function Catalog() {
   const [parts, setParts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
+  const [retryKey, setRetryKey] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams();
   const { addItem } = useCartStore();
   const wishlist = useWishlistStore();
@@ -18,6 +21,7 @@ export default function Catalog() {
   const category = searchParams.get('category') || '';
   const sort = searchParams.get('sort') || '';
   const stock = searchParams.get('stock') || '';
+  const page = Math.max(Number(searchParams.get('page')) || 1, 1);
 
   useEffect(() => {
     document.title = category ? `${category} — Catálogo | Autopartes Pro` : query ? `Buscar "${query}" | Autopartes Pro` : 'Catálogo de Repuestos | Autopartes Pro';
@@ -26,47 +30,54 @@ export default function Catalog() {
   useEffect(() => {
     const fetchParts = async () => {
       setLoading(true);
+      setError('');
       try {
         const res = await axios.get('/api/parts', {
-          params: { q: query, category, sort, stock }
+          params: { q: query, category, sort, stock, page, limit: 9 },
+          timeout: 10000
         });
-        setParts(Array.isArray(res.data) ? res.data : res.data.items || []);
+        setParts(res.data.items || []);
+        setPagination({ page: res.data.page || page, pages: res.data.pages || 1, total: res.data.total || 0 });
       } catch (error) {
         console.error('Error fetching parts:', error);
+        setParts([]);
+        setError(error.response?.data?.error || 'No fue posible cargar el catálogo. Intenta nuevamente.');
       } finally {
         setLoading(false);
       }
     };
     fetchParts();
-  }, [query, category, sort, stock]);
+  }, [query, category, sort, stock, page, retryKey]);
+
+  const updateParams = (updates, resetPage = true) => {
+    const next = new URLSearchParams(searchParams);
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value) next.set(key, value);
+      else next.delete(key);
+    });
+    if (resetPage) next.delete('page');
+    setSearchParams(next);
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
     const q = e.target.search.value;
-    if (q) searchParams.set('q', q);
-    else searchParams.delete('q');
-    setSearchParams(searchParams);
+    updateParams({ q });
   };
 
   const handleCategoryChange = (e) => {
     const cat = e.target.value;
-    if (cat) searchParams.set('category', cat);
-    else searchParams.delete('category');
-    setSearchParams(searchParams);
+    updateParams({ category: cat });
   };
 
   const handleSortChange = (e) => {
     const s = e.target.value;
-    if (s) searchParams.set('sort', s);
-    else searchParams.delete('sort');
-    setSearchParams(searchParams);
+    updateParams({ sort: s });
   };
 
   const handleStockChange = (e) => {
     const s = e.target.value;
-    if (s) searchParams.set('stock', s);
-    else searchParams.delete('stock');
-    setSearchParams(searchParams);
+    updateParams({ stock: s });
   };
 
   return (
@@ -170,9 +181,17 @@ export default function Catalog() {
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
             </div>
+          ) : error ? (
+            <div className="text-center py-20 bg-amber-50 rounded-xl border border-amber-200">
+              <h3 className="text-lg font-semibold text-amber-950">No pudimos cargar el catálogo</h3>
+              <p className="text-amber-800 mt-1">{error}</p>
+              <button onClick={() => setRetryKey(value => value + 1)} className="mt-5 bg-primary hover:bg-orange-600 text-white font-bold px-5 py-2 rounded-md">Reintentar</button>
+            </div>
           ) : parts.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {parts.map((part) => (
+            <>
+              <p className="mb-4 text-sm text-slate-500">{pagination.total} repuesto{pagination.total === 1 ? '' : 's'} encontrado{pagination.total === 1 ? '' : 's'}</p>
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {parts.map((part) => (
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -243,8 +262,18 @@ export default function Catalog() {
                     </div>
                   </div>
                 </motion.div>
-              ))}
-            </div>
+                ))}
+              </div>
+              {pagination.pages > 1 && (
+                <nav className="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Paginación del catálogo">
+                  <button onClick={() => updateParams({ page: Math.max(1, page - 1) }, false)} disabled={page === 1} className="rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-40">Anterior</button>
+                  {Array.from({ length: pagination.pages }, (_, i) => i + 1).map((number) => (
+                    <button key={number} onClick={() => updateParams({ page: number }, false)} aria-current={number === page ? 'page' : undefined} className={`min-w-10 rounded-md px-3 py-2 text-sm font-bold ${number === page ? 'bg-primary text-white' : 'border border-slate-300 text-slate-700 hover:bg-slate-50'}`}>{number}</button>
+                  ))}
+                  <button onClick={() => updateParams({ page: Math.min(pagination.pages, page + 1) }, false)} disabled={page === pagination.pages} className="rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-40">Siguiente</button>
+                </nav>
+              )}
+            </>
           ) : (
             <div className="text-center py-20 bg-white rounded-xl border border-slate-200 border-dashed">
               <Search className="w-12 h-12 text-slate-300 mx-auto mb-4" />

@@ -5,6 +5,13 @@ import axios from 'axios';
 import { Trash2, ShoppingBag, CreditCard, ChevronRight, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const TEST_CARDS = [
+  { brand: 'VISA', number: '4051 8856 0044 6623', cvv: '123', result: 'Aprobada', tone: 'emerald' },
+  { brand: 'AMEX', number: '3700 0000 0002 032', cvv: '1234', result: 'Aprobada', tone: 'emerald' },
+  { brand: 'MASTERCARD', number: '5186 0595 5959 0568', cvv: '123', result: 'Rechazada', tone: 'rose' },
+  { brand: 'REDCOMPRA', number: '4051 8842 3993 7763', cvv: '—', result: 'Aprobada', tone: 'emerald' }
+];
+
 export default function Checkout() {
   const { items, removeItem, updateItemQty, clearCart, getCartTotal } = useCartStore();
   const { user, token } = useAuthStore();
@@ -293,7 +300,7 @@ export default function Checkout() {
                 <button 
                   type="submit"
                   form="checkout-form"
-                  disabled={!user || isProcessing || loadingQuote}
+                  disabled={isProcessing || loadingQuote}
                   className="w-full bg-slate-900 hover:bg-slate-700 text-white font-bold py-4 px-4 rounded-md transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {isProcessing ? (
@@ -308,6 +315,28 @@ export default function Checkout() {
                 <p className="text-xs text-slate-500 text-center mt-4 flex items-center justify-center gap-1">
                   <Shield className="w-3 h-3" /> Serás redirigido a Transbank para completar el pago seguro
                 </p>
+
+                <details className="mt-5 overflow-hidden rounded-lg border border-dashed border-slate-300 bg-slate-50 text-left">
+                  <summary className="cursor-pointer px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-700">
+                    Modo de pruebas · tarjetas de demostración
+                  </summary>
+                  <div className="space-y-2 border-t border-slate-200 p-3">
+                    <p className="text-xs leading-relaxed text-slate-500">Referencia visual para pruebas de interfaz. No rellena el formulario, no crea pedidos y no procesa pagos.</p>
+                    <div className="grid gap-2">
+                      {TEST_CARDS.map((card) => (
+                        <div key={card.number} className="rounded-md border border-slate-200 bg-white p-3">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-xs font-black tracking-wider text-slate-800">{card.brand}</span>
+                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${card.tone === 'emerald' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>{card.result}</span>
+                          </div>
+                          <p className="mt-1 font-mono text-xs text-slate-700">{card.number}</p>
+                          <p className="mt-1 text-[10px] text-slate-500">CVV {card.cvv} · Cualquier vencimiento</p>
+                        </div>
+                      ))}
+                    </div>
+                    <button type="button" disabled className="w-full rounded-md border border-slate-300 bg-slate-100 px-3 py-2 text-xs font-bold text-slate-400">Simulación visual — próximamente</button>
+                  </div>
+                </details>
               </div>
             </div>
           </div>

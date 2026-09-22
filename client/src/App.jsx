@@ -21,6 +21,13 @@ const AdminOrderDetail = lazy(() => import('./pages/admin/AdminOrderDetail'))
 const PaymentSuccess = lazy(() => import('./pages/PaymentSuccess'))
 const PaymentFailure = lazy(() => import('./pages/PaymentFailure'))
 const PaymentPending = lazy(() => import('./pages/PaymentPending'))
+const NotFound = lazy(() => import('./pages/NotFound'))
+
+// Nuevas páginas del Navbar
+const Tiendas = lazy(() => import('./pages/Tiendas'))
+const Seguimiento = lazy(() => import('./pages/Seguimiento'))
+const Talleres = lazy(() => import('./pages/Talleres'))
+const Empresas = lazy(() => import('./pages/Empresas'))
 
 function PageWrapper({ children }) {
   return (
@@ -38,7 +45,7 @@ function PageWrapper({ children }) {
 
 const LoadingFallback = () => (
   <div className="flex h-[60vh] items-center justify-center">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#009ee3]"></div>
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
   </div>
 );
 
@@ -89,6 +96,12 @@ function App() {
               <Route path="/checkout" element={<PageWrapper><Checkout /></PageWrapper>} />
               <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
               <Route path="/perfil" element={<ProtectedRoute adminOnly={false}><PageWrapper><Profile /></PageWrapper></ProtectedRoute>} />
+              
+              <Route path="/tiendas" element={<PageWrapper><Tiendas /></PageWrapper>} />
+              <Route path="/seguimiento" element={<PageWrapper><Seguimiento /></PageWrapper>} />
+              <Route path="/talleres" element={<PageWrapper><Talleres /></PageWrapper>} />
+              <Route path="/empresas" element={<PageWrapper><Empresas /></PageWrapper>} />
+
               <Route path="/pago/exito" element={<PageWrapper><PaymentSuccess /></PageWrapper>} />
               <Route path="/pago/fallo" element={<PageWrapper><PaymentFailure /></PageWrapper>} />
               <Route path="/pago/pendiente" element={<PageWrapper><PaymentPending /></PageWrapper>} />
@@ -106,6 +119,7 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+              <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
             </Routes>
           </Suspense>
         </AnimatePresence>

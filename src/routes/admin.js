@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
-const { Part, Discount, User, Order, SiteConfig, Review, AuditLog, StockAlert } = require('../models');
+const { Part, Discount, User, Order, SiteConfig, Review, AuditLog, StockAlert, B2BRequest, Store, Workshop } = require('../models');
 const { admin } = require('../middleware');
 const { audit } = require('../audit');
 const { paginate, sendLowStockAlert, notifyBackInStock, pruneAuditLogs } = require('../services');
@@ -90,7 +90,7 @@ router.put('/api/admin/site-config', admin, async (req, res) => {
 router.get('/api/admin/dashboard', admin, async (req, res) => {
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
   const [sales, lowStock, orders, totalUsers, pendingOrders, totalProducts] = await Promise.all([
-    Order.aggregate([{ $match: { status: 'paid', createdAt: { $gte: thirtyDaysAgo } } }, { $group: { _id: null, revenue: { $sum: '$total' }, count: { $sum: 1 } } }]),
+    Order.aggregate([{ $match: { status: { $in: ['paid', 'dispatched', 'delivered'] }, createdAt: { $gte: thirtyDaysAgo } } }, { $group: { _id: null, revenue: { $sum: '$total' }, count: { $sum: 1 } } }]),
     Part.find({ $expr: { $lte: ['$stock', '$lowStockThreshold'] }, active: true }).sort({ stock: 1 }),
     Order.find().sort({ createdAt: -1 }).limit(8),
     User.countDocuments({ role: 'customer' }),
@@ -327,6 +327,45 @@ router.get('/api/admin/orders/:id/invoice', admin, async (req, res) => {
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Disposition', `attachment; filename=Boleta-${order.folio || order._id.toString().slice(-6)}.pdf`);
   require('../invoice').buildInvoicePDF(res, order, siteConfig);
+});
+
+// B2B Requests
+router.get('/api/admin/b2b-requests', admin, async (req, res) => {
+  res.json(await B2BRequest.find().sort({ createdAt: -1 }));
+});
+router.put('/api/admin/b2b-requests/:id/status', admin, async (req, res) => {
+  const request = await B2BRequest.findByIdAndUpdate(req.params.id, { status: req.body.status, notes: req.body.notes }, { new: true });
+  res.json(request);
+});
+
+// Stores
+router.get('/api/admin/stores', admin, async (req, res) => {
+  res.json(await Store.find().sort({ nombre: 1 }));
+});
+router.post('/api/admin/stores', admin, async (req, res) => {
+  res.status(201).json(await Store.create(req.body));
+});
+router.put('/api/admin/stores/:id', admin, async (req, res) => {
+  res.json(await Store.findByIdAndUpdate(req.params.id, req.body, { new: true }));
+});
+router.delete('/api/admin/stores/:id', admin, async (req, res) => {
+  await Store.findByIdAndDelete(req.params.id);
+  res.json({ ok: true });
+});
+
+// Workshops
+router.get('/api/admin/workshops', admin, async (req, res) => {
+  res.json(await Workshop.find().sort({ nombre: 1 }));
+});
+router.post('/api/admin/workshops', admin, async (req, res) => {
+  res.status(201).json(await Workshop.create(req.body));
+});
+router.put('/api/admin/workshops/:id', admin, async (req, res) => {
+  res.json(await Workshop.findByIdAndUpdate(req.params.id, req.body, { new: true }));
+});
+router.delete('/api/admin/workshops/:id', admin, async (req, res) => {
+  await Workshop.findByIdAndDelete(req.params.id);
+  res.json({ ok: true });
 });
 
 module.exports = router;

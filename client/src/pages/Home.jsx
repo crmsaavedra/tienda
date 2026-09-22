@@ -11,6 +11,7 @@ export default function Home() {
   const [featuredParts, setFeaturedParts] = useState([]);
   const [recentParts, setRecentParts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [catalogError, setCatalogError] = useState(false);
   const { addItem } = useCartStore();
   const recent = useRecentStore();
 
@@ -28,7 +29,7 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const partsRes = await axios.get('/api/parts?limit=4'); // Get some parts as featured
+        const partsRes = await axios.get('/api/parts', { params: { page: 1, limit: 4 }, timeout: 10000 });
         setFeaturedParts(partsRes.data.items || partsRes.data);
         if (recent.ids.length) {
           const recentRes = await axios.get('/api/parts', { params: { ids: recent.ids.join(',') } });
@@ -37,6 +38,7 @@ export default function Home() {
         }
       } catch (error) {
         console.error('Error fetching home data:', error);
+        setCatalogError(true);
       } finally {
         setLoading(false);
       }
@@ -236,6 +238,11 @@ export default function Home() {
             </motion.div>
           ))}
         </div>
+        {catalogError && (
+          <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-center text-sm text-amber-900">
+            No pudimos cargar los productos destacados en este momento. Puedes intentar nuevamente desde el catálogo.
+          </div>
+        )}
         <div className="mt-6 text-center sm:hidden">
           <Link to="/catalogo" className="inline-block border border-slate-300 text-slate-700 font-bold py-2 px-6 rounded hover:bg-slate-50 transition-colors">
             Ver todo el catálogo

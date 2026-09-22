@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuthStore, useConfigStore } from '../../store/store';
-import { Package, TrendingUp, AlertTriangle, Settings, Tag, Truck, Edit, Plus, Trash2, Users, Eye, MessageSquare, Shield, Download, ChevronLeft, ChevronRight, BarChart3, History, CreditCard, FileText } from 'lucide-react';
+import { Package, TrendingUp, AlertTriangle, Settings, Tag, Truck, Edit, Plus, Trash2, Users, Eye, MessageSquare, Shield, Download, ChevronLeft, ChevronRight, BarChart3, History, CreditCard, FileText, Briefcase, MapPin, Wrench } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
@@ -40,6 +40,15 @@ export default function AdminDashboard() {
         if (activeTab === 'dashboard') {
           const res = await axios.get('/api/admin/dashboard', { headers });
           setData(res.data);
+        } else if (activeTab === 'b2b') {
+          const res = await axios.get('/api/admin/b2b-requests', { headers });
+          setData(prev => ({ ...prev, b2b: res.data }));
+        } else if (activeTab === 'stores') {
+          const res = await axios.get('/api/admin/stores', { headers });
+          setData(prev => ({ ...prev, stores: res.data }));
+        } else if (activeTab === 'workshops') {
+          const res = await axios.get('/api/admin/workshops', { headers });
+          setData(prev => ({ ...prev, workshops: res.data }));
         } else if (activeTab === 'orders') {
           const res = await axios.get('/api/admin/orders', { params: { page: pagination.orders.page }, headers });
           setData(prev => ({ ...prev, orders: res.data.items }));
@@ -177,7 +186,25 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex items-start gap-8 min-h-[calc(100vh-4rem)]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-wrap items-start gap-8 min-h-[calc(100vh-4rem)]">
+      <div className="w-full md:hidden">
+        <label htmlFor="admin-mobile-section" className="block text-sm font-bold text-slate-700 mb-2">Sección del panel</label>
+        <select id="admin-mobile-section" value={activeTab} onChange={(event) => setActiveTab(event.target.value)} className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+          <option value="dashboard">Resumen</option>
+          <option value="reports">Reportes</option>
+          <option value="orders">Órdenes y despachos</option>
+          <option value="parts">Repuestos</option>
+          <option value="discounts">Descuentos</option>
+          <option value="b2b">B2B</option>
+          <option value="stores">Tiendas</option>
+          <option value="workshops">Talleres</option>
+          <option value="customers">Clientes</option>
+          <option value="reviews">Reseñas</option>
+          <option value="config">Diseño y textos</option>
+          <option value="advanced">Configuración avanzada</option>
+          <option value="audit">Auditoría</option>
+        </select>
+      </div>
       {/* Sidebar Placeholder */}
       <div className="w-64 flex-shrink-0 hidden md:block">
         {/* Sidebar Fijo */}
@@ -198,6 +225,15 @@ export default function AdminDashboard() {
             </button>
             <button onClick={() => setActiveTab('discounts')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'discounts' ? 'bg-primary text-white' : 'text-slate-300 hover:bg-slate-800'}`}>
               <Tag className="w-5 h-5" /> Descuentos
+            </button>
+            <button onClick={() => setActiveTab('b2b')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'b2b' ? 'bg-primary text-white' : 'text-slate-300 hover:bg-slate-800'}`}>
+              <Briefcase className="w-5 h-5" /> B2B
+            </button>
+            <button onClick={() => setActiveTab('stores')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'stores' ? 'bg-primary text-white' : 'text-slate-300 hover:bg-slate-800'}`}>
+              <MapPin className="w-5 h-5" /> Tiendas
+            </button>
+            <button onClick={() => setActiveTab('workshops')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'workshops' ? 'bg-primary text-white' : 'text-slate-300 hover:bg-slate-800'}`}>
+              <Wrench className="w-5 h-5" /> Talleres
             </button>
             <button onClick={() => setActiveTab('customers')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'customers' ? 'bg-primary text-white' : 'text-slate-300 hover:bg-slate-800'}`}>
               <Users className="w-5 h-5" /> Clientes

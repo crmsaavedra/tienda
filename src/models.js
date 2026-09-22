@@ -123,6 +123,37 @@ const counterSchema = new Schema({
   seq: { type: Number, default: 0 }
 });
 
+const b2bRequestSchema = new Schema({
+  rut: { type: String, required: true },
+  razonSocial: { type: String, required: true },
+  giro: String,
+  contacto: { type: String, required: true },
+  email: { type: String, required: true },
+  telefono: { type: String, required: true },
+  mensaje: String,
+  status: { type: String, enum: ['pending', 'contacted', 'approved', 'rejected'], default: 'pending' },
+  notes: String
+}, { timestamps: true });
+
+const storeSchema = new Schema({
+  nombre: { type: String, required: true },
+  direccion: { type: String, required: true },
+  horario: { type: String, required: true },
+  telefono: { type: String, required: true },
+  lat: Number,
+  lng: Number,
+  active: { type: Boolean, default: true }
+}, { timestamps: true });
+
+const workshopSchema = new Schema({
+  nombre: { type: String, required: true },
+  direccion: { type: String, required: true },
+  rating: { type: Number, default: 5, min: 1, max: 5 },
+  telefono: { type: String, required: true },
+  especialidades: [String],
+  active: { type: Boolean, default: true }
+}, { timestamps: true });
+
 module.exports = { 
   Part: mongoose.model('Part', partSchema), 
   Discount: mongoose.model('Discount', discountSchema), 
@@ -132,5 +163,8 @@ module.exports = {
   Review: mongoose.model('Review', reviewSchema),
   AuditLog: mongoose.model('AuditLog', auditLogSchema),
   StockAlert: mongoose.model('StockAlert', stockAlertSchema),
-  Counter: mongoose.model('Counter', counterSchema)
+  Counter: mongoose.model('Counter', counterSchema),
+  B2BRequest: mongoose.model('B2BRequest', b2bRequestSchema),
+  Store: mongoose.model('Store', storeSchema),
+  Workshop: mongoose.model('Workshop', workshopSchema)
 };

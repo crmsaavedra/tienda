@@ -19,7 +19,7 @@ router.all('/api/payments/webpay/return', async (req, res) => {
     const order = await Order.findById(data.session_id || req.query.order);
     if ((data.status === 'AUTHORIZED' || data.response_code === 0) && order) {
       await finalizePaidOrder(order, siteConfig);
-      return res.redirect(`${redirectBase()}/pago/exito?order=${order._id}`);
+      return res.redirect(`${redirectBase()}/pago/exito?payment=success&order=${order._id}`);
     }
     if (order) {
       order.status = 'cancelled';

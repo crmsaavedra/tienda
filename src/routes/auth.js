@@ -9,6 +9,16 @@ const { validate } = require('../validators');
 const logger = require('../logger');
 const twofa = require('../twofa');
 
+const publicUser = (user) => ({
+  name: user.name,
+  email: user.email,
+  role: user.role,
+  rut: user.rut || '',
+  phone: user.phone || '',
+  address: user.address || '',
+  otpEnabled: Boolean(user.otpEnabled)
+});
+
 const router = express.Router();
 const otp = new OTP();
 
@@ -16,7 +26,7 @@ router.post('/api/auth/register', validate('register'), async (req, res) => {
   const { name, email, password, rut, phone, address } = req.body;
   if (await User.exists({ email })) return res.status(409).json({ error: 'El email ya está registrado' });
   const user = await User.create({ name, email, password: await bcrypt.hash(password, 12), rut, phone, address });
-  res.status(201).json({ token: signUser(user), user: { name: user.name, email: user.email, role: user.role } });
+  res.status(201).json({ token: signUser(user), user: publicUser(user) });
 });
 
 router.post('/api/auth/login', validate('login'), async (req, res) => {
@@ -37,7 +47,7 @@ router.post('/api/auth/login', validate('login'), async (req, res) => {
 
   resetLoginFailures(email);
   if (user.role === 'admin') await audit({ user, headers: req.headers, ip: req.ip }, 'admin.login', { targetType: 'user', targetId: user._id });
-  res.json({ token: signUser(user), user: { name: user.name, email: user.email, role: user.role } });
+  res.json({ token: signUser(user), user: publicUser(user) });
 });
 
 router.post('/api/auth/login/2fa', validate('login2fa'), async (req, res) => {
@@ -57,7 +67,7 @@ router.post('/api/auth/login/2fa', validate('login2fa'), async (req, res) => {
   if (user.role === 'admin') await audit({ user, headers: req.headers, ip: req.ip }, 'admin.login', { targetType: 'user', targetId: user._id });
   res.json({
     token: signUser(user),
-    user: { name: user.name, email: user.email, role: user.role },
+    user: publicUser(user),
     backupUsed,
     recoveryCodesRemaining: backupUsed ? (user.recoveryCodes || []).length : undefined
   });
@@ -99,7 +109,7 @@ router.post('/api/auth/2fa/disable', auth, validate('twofaPassword'), async (req
 router.get('/api/auth/me', auth, async (req, res) => {
   const user = await User.findById(req.user.id);
   if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
-  res.json({ name: user.name, email: user.email, role: user.role, otpEnabled: user.otpEnabled, recoveryCodesCount: (user.recoveryCodes || []).length });
+  res.json({ ...publicUser(user), recoveryCodesCount: (user.recoveryCodes || []).length });
 });
 
 // Baja de comunicaciones de marketing (un clic, también vía enlace GET en emails).
