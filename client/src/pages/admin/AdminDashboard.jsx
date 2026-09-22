@@ -186,8 +186,8 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-wrap items-start gap-8 min-h-[calc(100vh-4rem)]">
-      <div className="w-full md:hidden">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-wrap items-start gap-6 xl:gap-8 min-h-[calc(100vh-4rem)]">
+      <div className="w-full xl:hidden">
         <label htmlFor="admin-mobile-section" className="block text-sm font-bold text-slate-700 mb-2">Sección del panel</label>
         <select id="admin-mobile-section" value={activeTab} onChange={(event) => setActiveTab(event.target.value)} className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
           <option value="dashboard">Resumen</option>
@@ -206,9 +206,9 @@ export default function AdminDashboard() {
         </select>
       </div>
       {/* Sidebar Placeholder */}
-      <div className="w-64 flex-shrink-0 hidden md:block">
-        {/* Sidebar Fijo */}
-        <div className="fixed top-24 w-64 h-[calc(100vh-7rem)] overflow-y-auto rounded-xl bg-slate-900 text-white shadow-xl p-4">
+      <div className="w-64 flex-shrink-0 hidden xl:block self-start">
+        {/* La barra conserva su espacio en el flujo y se fija solo dentro de su columna. */}
+        <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-xl bg-slate-900 text-white shadow-xl p-4">
           <h2 className="text-xl font-black mb-6 px-4">Panel Admin</h2>
           <nav className="space-y-1">
             <button onClick={() => setActiveTab('dashboard')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'dashboard' ? 'bg-primary text-white' : 'text-slate-300 hover:bg-slate-800'}`}>
@@ -255,7 +255,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-w-0">
+      <div className="w-full xl:flex-1 min-w-0">
           {activeTab === 'dashboard' && (
             <div className="space-y-8">
               <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
